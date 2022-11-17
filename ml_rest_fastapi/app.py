@@ -1,8 +1,10 @@
 """This module is the RESTful service entry point."""
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
+from ml_rest_fastapi.shared_types import MLRestFastAPINotReadyException
 from ml_rest_fastapi.routes.health import health_route
 from ml_rest_fastapi.routes.model import model_route
 from ml_rest_fastapi.settings import get_value
@@ -31,6 +33,20 @@ app = FastAPI(
 
 app.include_router(health_route, prefix="/health", tags=["health"])
 app.include_router(model_route, prefix="/model", tags=["model"])
+
+
+@app.exception_handler(MLRestFastAPINotReadyException)
+def not_ready_exception_handler(
+    request: Request,  # pylint: disable=unused-argument
+    exc: MLRestFastAPINotReadyException,  # pylint: disable=unused-argument
+):
+    """
+    "Not Ready" exception handler that returns HTTP 503 error.
+    """
+    return JSONResponse(
+        status_code=503,
+        content="Not Ready",
+    )
 
 
 @app.on_event("startup")

@@ -1,6 +1,7 @@
 """This module implements the health methods"""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from ml_rest_fastapi.shared_types import MLRestFastAPINotReadyException
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 
@@ -45,7 +46,7 @@ def liveness():
             },
         },
         503: {
-            "description": "Server Not Ready",
+            "description": "Error: Service Unavailable",
             "model": str,
             "content": {
                 "application/json": {
@@ -60,5 +61,5 @@ def readiness():
     Returns readiness status.
     """
     if not trained_model_wrapper.initialised:
-        raise HTTPException(503, detail="Not Ready")
+        raise MLRestFastAPINotReadyException()
     return "Ready"

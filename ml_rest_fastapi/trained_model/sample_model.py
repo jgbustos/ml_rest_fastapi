@@ -1,7 +1,7 @@
 # coding: utf-8
 """Module that does all the ML trained model prediction heavy lifting."""
 from logging import Logger, getLogger
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from os.path import normpath, join, dirname
 from typing import Any, Iterable, Dict
 import numpy as np
@@ -13,7 +13,9 @@ log: Logger = getLogger(__name__)
 
 
 def full_path(filename: str) -> str:
-    """Returns the full normalised path of a file in the same folder as this module."""
+    """
+    Returns the full normalised path of a file in the same folder as this module.
+    """
     return normpath(join(dirname(__file__), filename))
 
 
@@ -21,7 +23,9 @@ MODEL: Any = None
 
 
 def init() -> None:
-    """Loads the ML trained model (plus ancillary files) from file."""
+    """
+    Loads the ML trained model (plus ancillary files) from file.
+    """
     from time import sleep  # pylint: disable=import-outside-toplevel
 
     log.debug("Initialise model from file %s", full_path("model.pkl"))
@@ -36,7 +40,9 @@ def init() -> None:
 
 
 def run(input_data: Iterable) -> Dict:
-    """Makes a prediction using the trained ML model."""
+    """
+    Makes a prediction using the trained ML model.
+    """
     log.info("input_data:%s", input_data)
     data: pd.DataFrame = (
         input_data
@@ -59,15 +65,17 @@ def run(input_data: Iterable) -> Dict:
     return {"prediction": prediction}
 
 
-def sample() -> Dict:
-    """Returns a sample input vector as a dictionary."""
+def sample() -> Dict[str, Any]:
+    """
+    Returns a sample input vector as a string-indexed dictionary of values.
+    """
     return {
-        "int_param": 10,
         "string_param": "foobar",
-        "float_param": 0.1,
+        "int_param": 42,
+        "float_param": 2.71828,
         "bool_param": True,
-        "datetime_param": datetime.now().isoformat() + "Z",
-        "date_param": date.today().isoformat(),
+        "datetime_param": datetime.now(tz=timezone.utc),
+        "date_param": date.today(),
     }
 
 
