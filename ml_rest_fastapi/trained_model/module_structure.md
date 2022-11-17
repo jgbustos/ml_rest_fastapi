@@ -26,4 +26,4 @@ The eagled-eyed reader will have noticed that the methods init() and run() are t
 * Swagger documentation
 * JSON input validation
 
-An example file is provided: [ml_trained_model.py](ml_trained_model.py)
+An example file is provided: [sample_model.py](sample_model.py)
