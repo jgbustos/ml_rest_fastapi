@@ -21,7 +21,7 @@ This method should return a Python dictionary with sample values for each of the
 1. Initialisation of the Swagger documentation, listing the JSON parameters and their sample values
 2. Validation of the JSON input when the **model/predict** method is invoked
 
-The eagled-eyed reader will have noticed that the methods init() and run() are the same two that Microsoft prescribe when deploying a trained ML model to [Azure Machine Learning](https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-deploy-and-where). We just added  some type hints, plus sample() to support more advanced functionality:
+The eagled-eyed reader will have noticed that the methods init() and run() are the same two that Microsoft prescribe when deploying a trained ML model to [Azure Machine Learning](https://learn.microsoft.com/en-us/azure/machine-learning/v1/how-to-deploy-and-where). We just added  some type hints, plus sample() to support more advanced functionality:
 
 * Swagger documentation
 * JSON input validation
