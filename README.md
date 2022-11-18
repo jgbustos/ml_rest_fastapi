@@ -69,6 +69,7 @@ settings: Dict = {
 | Parameter | Values | Details |
 | --- | --- | --- |
 | TRAINED_MODEL_MODULE_NAME | e.g.: sample_model | Name of the Python module that initialises the ML model and returns predictions (see [section below](#setting-up-the-model)) |
+| DEBUG | False/True | When Debug = True, Uvicorn will run in reload mode, and FastAPI will return a colourful traceback instead of a sober 500/"Internal Server Error" |
 | MULTITHREADED_INIT | False/True | Multi-threaded initialisation of the trained model |
 
 ## Setting up the model
