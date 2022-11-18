@@ -49,7 +49,7 @@ These two methods are meant to be used as the liveness and readiness probes in a
 
 * POST <http://localhost:8888/model/predict> will return a prediction using the ML model. The data_point structure shows the JSON argument that must be supplied, and example values for each of the fields. The service will validate that all the mandatory values are passed. Return values are:
   * 200/Predicted value based on JSON input
-  * 400/Validation error if any mandatory parameter is missing or if any wrong data type (e.g. str, int, bool, datetime...) is supplied
+  * 422/"Validation Error" if any mandatory parameter is missing or if any wrong data type (e.g. str, int, bool, datetime...) is supplied
   * 500/"Internal Server Error" as catch-all exception handler
   * 503/"Not Ready" if model is not initialised
 
