@@ -9,7 +9,7 @@ import pandas as pd
 
 # import joblib
 
-log: Logger = getLogger(__name__)
+log: Logger = getLogger("uvicorn")
 
 
 def full_path(filename: str) -> str:
@@ -28,7 +28,7 @@ def init() -> None:
     """
     from time import sleep  # pylint: disable=import-outside-toplevel
 
-    log.debug("Initialise model from file %s", full_path("model.pkl"))
+    log.info("Load model from file: %s", full_path("model.pkl"))
     sleep(5)  # Fake delay to emulate a large model that takes a long time to load
 
     # deserialise the ML model (and possibly other objects such as feature_list,
@@ -43,7 +43,7 @@ def run(input_data: Iterable) -> Dict:
     """
     Makes a prediction using the trained ML model.
     """
-    log.info("input_data:%s", input_data)
+    log.info("input_data: %s", input_data)
     data: pd.DataFrame = (
         input_data
         if isinstance(input_data, pd.DataFrame)
@@ -58,10 +58,11 @@ def run(input_data: Iterable) -> Dict:
     # then make (or mock) a prediction
     #  prediction = MODEL.predict(data)
 
+    log.info("transformed_data: %s", np.array_str(data.values[0], max_line_width=10000))
     prediction = "mock_prediction"
     if isinstance(prediction, np.ndarray):
         prediction = prediction.tolist()[0]
-    log.info("data:%s - prediction:%s", data.values[0], [prediction])
+    log.info("prediction: %s", prediction)
     return {"prediction": prediction}
 
 

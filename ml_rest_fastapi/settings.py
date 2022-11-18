@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 def get_value(key: str) -> Any:
     """Returns a value from the corresponding env var or from settings if env var doesn't exist."""
-    settings: Dict = {
+    settings: Dict[str, Any] = {
         # Trained ML/AI model settings
         "TRAINED_MODEL_MODULE_NAME": "sample_model",
         # Module settings

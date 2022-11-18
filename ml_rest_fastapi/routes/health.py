@@ -24,7 +24,7 @@ health_route = APIRouter()
         },
     },
 )
-def liveness():
+def liveness() -> str:
     """
     Returns liveness status.
     """
@@ -56,7 +56,7 @@ def liveness():
         },
     },
 )
-def readiness():
+def readiness() -> str:
     """
     Returns readiness status.
     """

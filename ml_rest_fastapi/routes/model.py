@@ -1,6 +1,6 @@
 """This module implements the model inference methods"""
 
-import typing
+from typing import Dict, TYPE_CHECKING
 from fastapi import APIRouter
 from pydantic import BaseModel, create_model
 
@@ -9,7 +9,7 @@ from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 # mypy really doesn't like dynamically-generated types
 # See https://github.com/pydantic/pydantic/issues/615
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     # This is an alias, so mypy is happy with it
     # Therefore, this code runs during type checking
     InputVector = BaseModel
@@ -55,7 +55,7 @@ model_route = APIRouter()
         },
     },
 )
-def model_predict(input_vector: InputVector):
+def model_predict(input_vector: InputVector) -> Dict:
     """
     Returns a prediction using the trained ML model.
     """
