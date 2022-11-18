@@ -1,9 +1,9 @@
 """This module implements the health methods"""
 
-from fastapi import APIRouter
-from ml_rest_fastapi.shared_types import MLRestFastAPINotReadyException
-from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
+from fastapi import APIRouter, status
 
+from ml_rest_fastapi.shared_types import Message, MLRestFastAPINotReadyException
+from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 health_route = APIRouter()
 
@@ -13,22 +13,21 @@ health_route = APIRouter()
     summary="Returns liveness status",
     operation_id="liveness_get",
     responses={
-        200: {
-            "description": "Success",
-            "model": str,
+        status.HTTP_200_OK: {
+            "model": Message,
             "content": {
                 "application/json": {
-                    "example": "Live",
+                    "example": Message("Live").to_json(),
                 }
             },
         },
     },
 )
-def liveness() -> str:
+def liveness() -> Message:
     """
     Returns liveness status.
     """
-    return "Live"
+    return Message("Live")
 
 
 @health_route.get(
@@ -36,30 +35,28 @@ def liveness() -> str:
     summary="Returns readiness status",
     operation_id="readiness_get",
     responses={
-        200: {
-            "description": "Success",
-            "model": str,
+        status.HTTP_200_OK: {
+            "model": Message,
             "content": {
                 "application/json": {
-                    "example": "Ready",
+                    "example": Message("Ready").to_json(),
                 }
             },
         },
-        503: {
-            "description": "Error: Service Unavailable",
-            "model": str,
+        status.HTTP_503_SERVICE_UNAVAILABLE: {
+            "model": Message,
             "content": {
                 "application/json": {
-                    "example": "Not Ready",
+                    "example": Message("Not Ready").to_json(),
                 }
             },
         },
     },
 )
-def readiness() -> str:
+def readiness() -> Message:
     """
     Returns readiness status.
     """
     if not trained_model_wrapper.initialised:
         raise MLRestFastAPINotReadyException()
-    return "Ready"
+    return Message("Ready")

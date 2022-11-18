@@ -1,13 +1,16 @@
 """This module is the RESTful service entry point."""
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from ml_rest_fastapi.shared_types import MLRestFastAPINotReadyException
+from ml_rest_fastapi.settings import get_value
+from ml_rest_fastapi.shared_types import (
+    Message,
+    MLRestFastAPINotReadyException,
+)
 from ml_rest_fastapi.routes.health import health_route
 from ml_rest_fastapi.routes.model import model_route
-from ml_rest_fastapi.settings import get_value
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 tags_metadata = [
@@ -28,6 +31,7 @@ app = FastAPI(
         built with Python 3 and FastAPI",
     version="0.1.0",
     openapi_tags=tags_metadata,
+    debug=get_value("DEBUG"),
 )
 
 
@@ -44,8 +48,8 @@ def not_ready_exception_handler(
     "Not Ready" exception handler that returns HTTP 503 error.
     """
     return JSONResponse(
-        status_code=503,
-        content="Not Ready",
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content=Message("Not Ready").to_json(),
     )
 
 
@@ -61,4 +65,4 @@ def startup_event():
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8888, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8888, reload=get_value("DEBUG"))

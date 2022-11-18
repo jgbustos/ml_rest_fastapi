@@ -9,6 +9,7 @@ def get_value(key: str) -> Any:
         # Trained ML/AI model settings
         "TRAINED_MODEL_MODULE_NAME": "sample_model",
         # Module settings
+        "DEBUG": True,
         "MULTITHREADED_INIT": True,
     }
     return os.environ[key] if key in os.environ else settings.get(key, False)
