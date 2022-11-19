@@ -62,6 +62,7 @@ settings: Dict = {
     # Trained ML/AI model settings
     "TRAINED_MODEL_MODULE_NAME": "sample_model",
     # Module settings
+    "DEBUG": True,
     "MULTITHREADED_INIT": True,
 }
 ```
@@ -75,4 +76,3 @@ settings: Dict = {
 ## Setting up the model
 
 The trained ML model is meant to be initialised and invoked to make predictions in the context of a Python unit saved inside the directory **ml_rest_fastapi/trained_model**. The structure of this Python module is explained in [this document](ml_rest_fastapi/trained_model/module_structure.md)
-
