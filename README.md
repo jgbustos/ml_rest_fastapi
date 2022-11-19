@@ -1,5 +1,8 @@
 # ml_rest_fastapi
 
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=jgbustos_ml_rest_fastapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=jgbustos_ml_rest_fastapi)
+[![Known Vulnerabilities](https://snyk.io/test/github/jgbustos/ml_rest_fastapi/badge.svg)](https://app.snyk.io/org/jgbustos/projects)
+
 A RESTful API to return predictions from a trained ML model, built with Python 3 and FastAPI
 
 ## Development set-up instructions
