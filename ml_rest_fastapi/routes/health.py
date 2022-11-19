@@ -2,7 +2,11 @@
 
 from fastapi import APIRouter, status
 
-from ml_rest_fastapi.shared_types import Message, MLRestFastAPINotReadyException
+from ml_rest_fastapi.shared import (
+    Message,
+    MLRestFastAPINotReadyException,
+    make_openapi_response,
+)
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 health_route = APIRouter()
@@ -13,14 +17,9 @@ health_route = APIRouter()
     summary="Returns liveness status",
     operation_id="liveness_get",
     responses={
-        status.HTTP_200_OK: {
-            "model": Message,
-            "content": {
-                "application/json": {
-                    "example": Message("Live").to_json(),
-                }
-            },
-        },
+        status.HTTP_200_OK: make_openapi_response(
+            model_type=Message, example=Message("Live").to_json()
+        ),
     },
 )
 def liveness() -> Message:
@@ -35,22 +34,12 @@ def liveness() -> Message:
     summary="Returns readiness status",
     operation_id="readiness_get",
     responses={
-        status.HTTP_200_OK: {
-            "model": Message,
-            "content": {
-                "application/json": {
-                    "example": Message("Ready").to_json(),
-                }
-            },
-        },
-        status.HTTP_503_SERVICE_UNAVAILABLE: {
-            "model": Message,
-            "content": {
-                "application/json": {
-                    "example": Message("Not Ready").to_json(),
-                }
-            },
-        },
+        status.HTTP_200_OK: make_openapi_response(
+            model_type=Message, example=Message("Ready").to_json()
+        ),
+        status.HTTP_503_SERVICE_UNAVAILABLE: make_openapi_response(
+            model_type=Message, example=Message("Not Ready").to_json()
+        ),
     },
 )
 def readiness() -> Message:

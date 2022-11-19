@@ -5,9 +5,10 @@ from fastapi import APIRouter, status
 from pydantic import BaseModel, create_model
 
 from ml_rest_fastapi.settings import get_value
-from ml_rest_fastapi.shared_types import (
+from ml_rest_fastapi.shared import (
     Message,
     MLRestFastAPINotReadyException,
+    make_openapi_response,
 )
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
@@ -22,47 +23,38 @@ else:
     # However, this is perfectly fine (and needed!) in run-time
     InputVector = create_model("InputVector", **trained_model_wrapper.sample())
 
+# Needed because create_model() above builds a model with all fields optional!
+for key, field in InputVector.__fields__.items():
+    field.required = True
+    field.allow_none = False
+
+
 model_route = APIRouter()
 
 
-responses_dict: Dict = {
-    status.HTTP_200_OK: {
-        "model": Dict,
-        "content": {
-            "application/json": {
-                "example": {"prediction": "example"},
-            }
-        },
-    },
-    status.HTTP_500_INTERNAL_SERVER_ERROR: {},
-    status.HTTP_503_SERVICE_UNAVAILABLE: {
-        "model": Message,
-        "content": {
-            "application/json": {
-                "example": Message("Not Ready").to_json(),
-            }
-        },
-    },
-}
-
-if get_value("DEBUG"):
-    responses_dict[status.HTTP_500_INTERNAL_SERVER_ERROR]["content"] = {
-        "text/plain": {
-            "example": """Traceback (most recent call last):
+EXAMPLE_TRACEBACK: str = """Traceback (most recent call last):
   File "xxxxx.py", line 1234, in __call__
     return await foo
   File "yyyyy.py", line 5678, in __call__
     return bar[0]
 IndexError: list index out of range"""
-        }
-    }
-else:
-    responses_dict[status.HTTP_500_INTERNAL_SERVER_ERROR]["model"] = Message
-    responses_dict[status.HTTP_500_INTERNAL_SERVER_ERROR]["content"] = {
-        "application/json": {
-            "example": Message("Internal Server Error").to_json(),
-        }
-    }
+
+
+responses_dict: Dict = {
+    status.HTTP_200_OK: make_openapi_response(
+        model_type=Dict, example={"prediction": "example"}
+    ),
+    status.HTTP_500_INTERNAL_SERVER_ERROR: make_openapi_response(
+        mime_type="text/plain", example=EXAMPLE_TRACEBACK
+    )
+    if get_value("DEBUG")
+    else make_openapi_response(
+        model_type=Message, example=Message("Internal Server Error").to_json()
+    ),
+    status.HTTP_503_SERVICE_UNAVAILABLE: make_openapi_response(
+        model_type=Message, example=Message("Not Ready").to_json()
+    ),
+}
 
 
 @model_route.post(

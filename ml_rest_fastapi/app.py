@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
 from ml_rest_fastapi.settings import get_value
-from ml_rest_fastapi.shared_types import (
+from ml_rest_fastapi.shared import (
     Message,
     MLRestFastAPINotReadyException,
 )
