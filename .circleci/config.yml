@@ -5,22 +5,62 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: cimg/python:3.10
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    resource_class: medium
+    
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-py310-{{ arch }}-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            # - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate 
+            pip install --upgrade pip
+            pip install --upgrade wheel
+            pip install -r requirements.txt
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-py310-{{ arch }}-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: pylint checks
+          command: |
+            . venv/bin/activate
+            pip install pylint==2.15.6
+            python -m pylint ml_rest_fastapi
+
+      - run:
+          name: mypy type hint checks
+          command: |
+            . venv/bin/activate
+            pip install mypy==0.991
+            python -m mypy --pretty --config-file=mypy.ini ml_rest_fastapi
+
+      - run:
+          name: black formatter checks
+          command: |
+            . venv/bin/activate
+            pip install black==22.10.0
+            python -m black --check ml_rest_fastapi
