@@ -1,5 +1,6 @@
 # ml_rest_fastapi
 
+[![CircleCI](https://img.shields.io/circleci/build/github/jgbustos/ml_rest_fastapi/main?logo=CircleCI&label=CircleCI%20build)](https://circleci.com/gh/jgbustos/ml_rest_fastapi)
 [![Build and publish Docker image](https://github.com/jgbustos/ml_rest_fastapi/actions/workflows/docker-image.yml/badge.svg)](https://github.com/jgbustos/ml_rest_fastapi/actions/workflows/docker-image.yml)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=jgbustos_ml_rest_fastapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=jgbustos_ml_rest_fastapi)
 [![Known Vulnerabilities](https://snyk.io/test/github/jgbustos/ml_rest_fastapi/badge.svg)](https://app.snyk.io/org/jgbustos/projects)
