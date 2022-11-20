@@ -40,7 +40,7 @@ app.include_router(model_route, prefix="/model", tags=["model"])
 
 
 @app.exception_handler(MLRestFastAPINotReadyException)
-def not_ready_exception_handler (
+def not_ready_exception_handler(
     request: Request,  # pylint: disable=unused-argument
     exc: MLRestFastAPINotReadyException,  # pylint: disable=unused-argument
 ) -> JSONResponse:
