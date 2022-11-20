@@ -12,6 +12,15 @@ from ml_rest_fastapi.shared import (
 )
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
+
+def dict_value_types(arg: Dict) -> Dict:
+    """
+    Takes a Dict like {"foo": "bar", "xx": 12} and returns {"foo": (str, ...), "xx": (int, ...)}
+    because pydantic.create_model needs these (type, ellipsis) tuples to make fields required
+    """
+    return {key: (type(value), ...) for key, value in arg.items()}
+
+
 # mypy really doesn't like dynamically-generated types
 # See https://github.com/pydantic/pydantic/issues/615
 if TYPE_CHECKING:
@@ -21,13 +30,9 @@ if TYPE_CHECKING:
 else:
     # Whereas this is a variable, so mypy complains if you use it as an annotation
     # However, this is perfectly fine (and needed!) in run-time
-    InputVector = create_model("InputVector", **trained_model_wrapper.sample())
-
-# Needed because create_model() above builds a model with all fields optional!
-for key, field in InputVector.__fields__.items():
-    field.required = True
-    field.allow_none = False
-
+    InputVector = create_model(
+        "InputVector", **dict_value_types(trained_model_wrapper.sample())
+    )
 
 model_route = APIRouter()
 
