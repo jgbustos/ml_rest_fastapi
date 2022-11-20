@@ -1,5 +1,6 @@
 # ml_rest_fastapi
 
+[![Build and publish Docker image](https://github.com/jgbustos/ml_rest_fastapi/actions/workflows/docker-image.yml/badge.svg)](https://github.com/jgbustos/ml_rest_fastapi/actions/workflows/docker-image.yml)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=jgbustos_ml_rest_fastapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=jgbustos_ml_rest_fastapi)
 [![Known Vulnerabilities](https://snyk.io/test/github/jgbustos/ml_rest_fastapi/badge.svg)](https://app.snyk.io/org/jgbustos/projects)
 
@@ -79,3 +80,15 @@ settings: Dict = {
 ## Setting up the model
 
 The trained ML model is meant to be initialised and invoked to make predictions in the context of a Python unit saved inside the directory **ml_rest_fastapi/trained_model**. The structure of this Python module is explained in [this document](ml_rest_fastapi/trained_model/module_structure.md)
+
+## Build automation
+
+This project is built into a container image using GitHub Actions and pushed to the Docker Hub at <https://hub.docker.com/r/jgbustos/ml-rest-fastapi/>
+
+## Running the Docker container
+
+```Powershell
+> docker run -d -p8888:8888 jgbustos/ml-rest-fastapi:latest
+```
+
+Open the URL <http://localhost:8888/docs/> with your browser and see the sample OpenAPI documentation
