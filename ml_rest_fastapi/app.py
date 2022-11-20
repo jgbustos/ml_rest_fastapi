@@ -40,10 +40,10 @@ app.include_router(model_route, prefix="/model", tags=["model"])
 
 
 @app.exception_handler(MLRestFastAPINotReadyException)
-def not_ready_exception_handler(
+def not_ready_exception_handler (
     request: Request,  # pylint: disable=unused-argument
     exc: MLRestFastAPINotReadyException,  # pylint: disable=unused-argument
-):
+) -> JSONResponse:
     """
     "Not Ready" exception handler that returns HTTP 503 error.
     """
@@ -54,7 +54,7 @@ def not_ready_exception_handler(
 
 
 @app.on_event("startup")
-def startup_event():
+def startup_event() -> None:
     """
     FastAPI startup event, used to initialise the trained ML model wrapper.
     """

@@ -8,7 +8,7 @@ from dataclasses import dataclass, asdict
 class Serialisable:
     """Parent serialisable dataclass"""
 
-    def to_json(self):
+    def to_json(self) -> Dict:
         """Return as dict so it can be JSON serialisable"""
         return asdict(self)
 
