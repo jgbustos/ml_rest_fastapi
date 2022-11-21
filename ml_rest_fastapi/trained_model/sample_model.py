@@ -6,6 +6,7 @@ from os.path import normpath, join, dirname
 from typing import Any, Iterable, Dict
 import numpy as np
 import pandas as pd
+from ml_rest_fastapi.settings import get_value
 
 # import joblib
 
@@ -63,7 +64,13 @@ def run(input_data: Iterable) -> Dict:
     if isinstance(prediction, np.ndarray):
         prediction = prediction.tolist()[0]
     log.info("prediction: %s", prediction)
-    return {"prediction": prediction}
+
+    ret = {}
+    ret["prediction"] = prediction
+    if get_value("EXPLAIN_PREDICTIONS"):
+        ret["explanation"] = "mock_explanation"
+
+    return ret
 
 
 def sample() -> Dict[str, Any]:
