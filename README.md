@@ -67,6 +67,7 @@ settings: Dict = {
     # Trained ML/AI model settings
     "TRAINED_MODEL_MODULE_NAME": "sample_model",
     # Module settings
+    "EXPLAIN_PREDICTIONS": False,
     "DEBUG": True,
     "MULTITHREADED_INIT": True,
 }
@@ -75,6 +76,7 @@ settings: Dict = {
 | Parameter | Values | Details |
 | --- | --- | --- |
 | TRAINED_MODEL_MODULE_NAME | e.g.: sample_model | Name of the Python module that initialises the ML model and returns predictions (see [section below](#setting-up-the-model)) |
+| EXPLAIN_PREDICTIONS | False/True | When True, the model should return an explanation (using [eli5](https://pypi.org/project/eli5/), [LIME](https://pypi.org/project/lime/), [SHAP](https://pypi.org/project/shap/), etc.) along with the prediction |
 | DEBUG | False/True | When Debug = True, Uvicorn will run in reload mode, and FastAPI will return a colourful traceback instead of a sober 500/"Internal Server Error" |
 | MULTITHREADED_INIT | False/True | Multi-threaded initialisation of the trained model |
 
