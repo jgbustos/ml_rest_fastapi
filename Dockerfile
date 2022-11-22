@@ -13,4 +13,4 @@ WORKDIR /app
 EXPOSE 8888
 ENV PYTHONPATH "${PYTHONPATH}:/app/ml_rest_fastapi"
 
-CMD ["/usr/local/bin/uvicorn", "ml_rest_fastapi.app:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8888"]
+CMD ["/usr/local/bin/gunicorn", "--config", "gunicorn.conf.py"]
