@@ -1,6 +1,6 @@
 # coding: utf-8
 """Module that does all the ML trained model prediction heavy lifting."""
-from logging import Logger, getLogger
+from logging import Logger
 from os.path import normpath, join, dirname
 from typing import Any, Iterable, Dict
 import joblib
@@ -8,10 +8,11 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 import eli5
+from ml_rest_fastapi.shared import get_logger
 from ml_rest_fastapi.settings import get_value
 
 
-log: Logger = getLogger("uvicorn")
+log: Logger = get_logger()
 
 
 def full_path(filename: str) -> str:
