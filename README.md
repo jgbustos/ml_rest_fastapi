@@ -5,11 +5,11 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=jgbustos_ml_rest_fastapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=jgbustos_ml_rest_fastapi)
 [![Known Vulnerabilities](https://snyk.io/test/github/jgbustos/ml_rest_fastapi/badge.svg)](https://app.snyk.io/org/jgbustos/projects)
 
-A RESTful API to return predictions from a trained ML model, built with Python 3 and FastAPI
+A RESTful API to return predictions from a trained ML model, built with Python 3 and FastAPI.
 
 ## Development set-up instructions
 
-First, open a command line interface and clone the GitHub repo in your workspace
+First, open a command line interface and clone the GitHub repo in your workspace:
 
 ```Powershell
 PS > cd $WORKSPACE_PATH$
@@ -19,11 +19,11 @@ PS > cd ml_rest_fastapi
 
 ```Bash
 $ cd $WORKSPACE_PATH
-S git clone https://github.com/jgbustos/ml_rest_fastapi
+$ git clone https://github.com/jgbustos/ml_rest_fastapi
 $ cd ml_rest_fastapi
 ```
 
-Create and activate a Python virtual environment, then install the required Python packages using pip
+Create and activate a Python virtual environment, then install the required Python packages using pip:
 
 ```Powershell
 PS > virtualenv venv
@@ -37,7 +37,7 @@ $ source ./venv/bin/activate
 (venv) $ pip install -r ./requirements.txt
 ```
 
-Once dependencies are installed, set up the project for development
+Once dependencies are installed, set up the project for development:
 
 ```Powershell
 (venv) PS > pip install -e .
@@ -59,9 +59,9 @@ Finally, run the project:
 
 ## Interfaces exposed
 
-Open the URL <http://localhost:8888/docs/> with your browser and see the sample OpenAPI documentation. Alternatively, open the URL <http://localhost:8888/redoc/> to see the ReDoc UI.
+Open the URL <http://localhost:8888/docs/> with your browser and see the Swagger UI page. Alternatively, open the URL <http://localhost:8888/redoc/> to see the ReDoc UI.
 
-OpenAPI JSON available from URL <http://localhost:8888/openapi.json>
+OpenAPI JSON available from URL <http://localhost:8888/openapi.json>.
 
 ### Health
 
@@ -102,11 +102,11 @@ settings: Dict[str, Any] = {
 
 ## Setting up the model
 
-The trained ML model is meant to be initialised and invoked to make predictions in the context of a Python unit saved inside the directory **ml_rest_fastapi/trained_model**. The structure of this Python module is explained in [this document](ml_rest_fastapi/trained_model/module_structure.md)
+The trained ML model is meant to be initialised and invoked to make predictions in the context of a Python unit saved inside the directory **ml_rest_fastapi/trained_model**. The structure of this Python module is explained in [this document](ml_rest_fastapi/trained_model/module_structure.md).
 
 ## Build automation
 
-This project is built into a container image using GitHub Actions and pushed to the Docker Hub at <https://hub.docker.com/r/jgbustos/ml-rest-fastapi/>
+This project is built into a container image using GitHub Actions and pushed to the Docker Hub at <https://hub.docker.com/r/jgbustos/ml-rest-fastapi/>.
 
 ## Running the Docker container
 
