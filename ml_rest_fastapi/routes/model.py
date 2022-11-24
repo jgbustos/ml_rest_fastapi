@@ -1,6 +1,6 @@
 """This module implements the model inference methods"""
 
-from typing import Dict, TYPE_CHECKING
+from typing import Any, Dict, Union, TYPE_CHECKING
 from fastapi import APIRouter, status
 from pydantic import BaseModel, create_model
 
@@ -45,7 +45,7 @@ EXAMPLE_TRACEBACK: str = """Traceback (most recent call last):
 IndexError: list index out of range"""
 
 
-responses_dict: Dict = {
+responses_dict: Dict[Union[int, str], Dict[str, Any]] = {
     status.HTTP_200_OK: make_openapi_response(
         model_type=Dict, example={"prediction": "example"}
     ),

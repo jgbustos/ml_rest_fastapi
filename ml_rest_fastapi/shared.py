@@ -1,6 +1,6 @@
 """This module declares shared stuff"""
 
-from typing import Type, Optional, Dict, Union
+from typing import Any, Type, Optional, Dict, Union
 from logging import Logger, getLogger
 from dataclasses import dataclass, asdict
 from ml_rest_fastapi.settings import get_value
@@ -34,7 +34,7 @@ def make_openapi_response(
     model_type: Optional[Type] = None,
     mime_type: str = "application/json",
     example: Union[str, Dict] = "",
-) -> Dict:
+) -> Dict[str, Any]:
     """
     Returns a declaration of an OpenAPI extended response.
     """
