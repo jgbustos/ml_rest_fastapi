@@ -17,6 +17,12 @@ PS > git clone https://github.com/jgbustos/ml_rest_fastapi
 PS > cd ml_rest_fastapi
 ```
 
+```Bash
+$ cd $WORKSPACE_PATH
+S git clone https://github.com/jgbustos/ml_rest_fastapi
+$ cd ml_rest_fastapi
+```
+
 Create and activate a Python virtual environment, then install the required Python packages using pip
 
 ```Powershell
@@ -25,10 +31,20 @@ PS > venv\scripts\activate.ps1
 (venv) PS > pip install -r requirements.txt
 ```
 
+```Bash
+$ virtualenv venv
+$ source ./venv/bin/activate
+(venv) $ pip install -r ./requirements.txt
+```
+
 Once dependencies are installed, set up the project for development
 
 ```Powershell
 (venv) PS > pip install -e .
+```
+
+```Bash
+(venv) $ pip install -e .
 ```
 
 Finally, run the project:
@@ -37,9 +53,13 @@ Finally, run the project:
 (venv) PS > uvicorn ml_rest_fastapi.app:app --host 0.0.0.0 --port 8888 --reload
 ```
 
-Open the URL <http://localhost:8888/docs/> with your browser and see the sample OpenAPI documentation
+```Bash
+(venv) $ uvicorn ml_rest_fastapi.app:app --host 0.0.0.0 --port 8888 --reload
+```
 
 ## Interfaces exposed
+
+Open the URL <http://localhost:8888/docs/> with your browser and see the sample OpenAPI documentation. Alternatively, open the URL <http://localhost:8888/redoc/> to see the ReDoc UI.
 
 OpenAPI JSON available from URL <http://localhost:8888/openapi.json>
 
@@ -63,7 +83,7 @@ These two methods are meant to be used as the liveness and readiness probes in a
 Configuration parameters are contained in the file **ml_rest_fastapi/settings.py**, but they can also be overriden by setting env vars:
 
 ```python
-settings: Dict = {
+settings: Dict[str, Any] = {
     # Trained ML/AI model settings
     "TRAINED_MODEL_MODULE_NAME": "sample_model",
     # Module settings
@@ -93,5 +113,3 @@ This project is built into a container image using GitHub Actions and pushed to 
 ```Powershell
 > docker run -d -p8888:8888 jgbustos/ml-rest-fastapi:latest
 ```
-
-Open the URL <http://localhost:8888/docs/> with your browser and see the sample OpenAPI documentation
