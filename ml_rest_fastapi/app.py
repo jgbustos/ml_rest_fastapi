@@ -1,5 +1,8 @@
 """This module is the RESTful service entry point."""
 
+import os
+import platform
+from subprocess import run
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
@@ -65,4 +68,14 @@ def startup_event() -> None:
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8888, reload=get_value("DEBUG"))
+    if platform.uname().system.lower() == "linux":
+        run(
+            [
+                "gunicorn",
+                "-c",
+                os.path.normpath(os.path.dirname(__file__) + "/../gunicorn.conf.py"),
+            ],
+            check=True,
+        )
+    else:
+        uvicorn.run("app:app", host="0.0.0.0", port=8888, reload=get_value("DEBUG"))
