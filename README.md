@@ -5,22 +5,18 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=jgbustos_ml_rest_fastapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=jgbustos_ml_rest_fastapi)
 [![Known Vulnerabilities](https://snyk.io/test/github/jgbustos/ml_rest_fastapi/badge.svg)](https://app.snyk.io/org/jgbustos/projects)
 
-A RESTful API to return predictions from a trained ML model, built with Python 3 and FastAPI.
+A RESTful API to return predictions from a trained ML model, built with Python 3 and [FastAPI](https://fastapi.tiangolo.com/).
 
 ## Development set-up instructions
 
-First, open a command line interface and clone the GitHub repo in your workspace:
+### Windows
+
+First, open Powershell and clone the GitHub repo in your workspace:
 
 ```Powershell
 PS > cd $WORKSPACE_PATH$
 PS > git clone https://github.com/jgbustos/ml_rest_fastapi
 PS > cd ml_rest_fastapi
-```
-
-```Bash
-$ cd $WORKSPACE_PATH
-$ git clone https://github.com/jgbustos/ml_rest_fastapi
-$ cd ml_rest_fastapi
 ```
 
 Create and activate a Python virtual environment, then install the required Python packages using pip:
@@ -31,20 +27,10 @@ PS > venv\scripts\activate.ps1
 (venv) PS > pip install -r requirements.txt
 ```
 
-```Bash
-$ virtualenv venv
-$ source ./venv/bin/activate
-(venv) $ pip install -r ./requirements.txt
-```
-
 Once dependencies are installed, set up the project for development:
 
 ```Powershell
 (venv) PS > pip install -e .
-```
-
-```Bash
-(venv) $ pip install -e .
 ```
 
 Finally, run the project:
@@ -53,8 +39,34 @@ Finally, run the project:
 (venv) PS > uvicorn ml_rest_fastapi.app:app --host 0.0.0.0 --port 8888 --reload
 ```
 
+### Linux
+
+First, open a terminal and clone the GitHub repo in your workspace:
+
 ```Bash
-(venv) $ uvicorn ml_rest_fastapi.app:app --host 0.0.0.0 --port 8888 --reload
+$ cd $WORKSPACE_PATH
+$ git clone https://github.com/jgbustos/ml_rest_fastapi
+$ cd ml_rest_fastapi
+```
+
+Create and activate a Python virtual environment, then install the required Python packages using pip:
+
+```Bash
+$ virtualenv venv
+$ source ./venv/bin/activate
+(venv) $ pip install -r ./requirements.txt
+```
+
+Once dependencies are installed, set up the project for development:
+
+```Bash
+(venv) $ pip install -e .
+```
+
+Finally, run the project:
+
+```Bash
+(venv) $ gunicorn -c gunicorn.conf.py
 ```
 
 ## Interfaces exposed
@@ -63,14 +75,14 @@ Open the URL <http://localhost:8888/docs/> with your browser and see the Swagger
 
 OpenAPI JSON available from URL <http://localhost:8888/openapi.json>.
 
-### Health
+### Health router
 
 These two methods are meant to be used as the liveness and readiness probes in a Kubernetes deployment:
 
 * GET <http://localhost:8888/health/live> returns 200/"Live" if the service is up and running
 * GET <http://localhost:8888/health/ready> returns 200/"Ready" or 503/"Not Ready" depending on whether the ML model has been correctly initialised or not
 
-### Model
+### Model router
 
 * POST <http://localhost:8888/model/predict> will return a prediction using the ML model. The data_point structure shows the JSON argument that must be supplied, and example values for each of the fields. The service will validate that all the mandatory values are passed. Return values are:
   * 200/Predicted value based on JSON input
