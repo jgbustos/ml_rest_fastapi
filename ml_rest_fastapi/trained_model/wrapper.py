@@ -12,7 +12,8 @@ WrapperCallableType = Optional[Callable]
 
 class TrainedModelWrapper:
     """TrainedModelWrapper class acts as adapter for programmatically chosen ML trained model
-    module. The init(), run() and sample() methods call the module's identically named methods."""
+    module. The init(), run() and sample() methods call the module's identically named methods.
+    """
 
     def __init__(self) -> None:
         """Initialise everything to None, particularly init, run, sample and ready methods."""
