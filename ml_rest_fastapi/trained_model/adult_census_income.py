@@ -42,6 +42,30 @@ def init() -> None:
     COLUMNS = joblib.load(full_path(COLUMNS_PICKLE_FILE))
 
 
+def explain(model, data, columns):
+    """
+    Explains the prediction with some help from eli5.
+    """
+    estimator = model
+    transformed_data = data
+    feature_names = columns
+    # model might be a Pipeline with an estimator at the end, possibly even a feature selector
+    if isinstance(estimator, Pipeline):
+        if len(estimator.steps) > 1:
+            transformer = Pipeline(estimator.steps[:-1])
+            transformed_data = pd.DataFrame(transformer.transform(data), index=[0])
+            for step in transformer.steps:
+                if hasattr(step[1], "get_support"):  # feature selector
+                    feature_names = data.columns[step[1].get_support()].tolist()
+                    break
+        estimator = estimator.steps[-1][1]
+    return eli5.format_as_dict(
+        eli5.explain_prediction(
+            estimator, transformed_data, feature_names=feature_names, top=None
+        )
+    )
+
+
 def run(input_data: Iterable) -> Dict:
     """
     Makes a prediction using the trained ML model.
@@ -61,25 +85,7 @@ def run(input_data: Iterable) -> Dict:
     ret["prediction"] = prediction
 
     if get_value("EXPLAIN_PREDICTIONS"):
-        estimator = MODEL
-        transformed_data = data
-        feature_names = COLUMNS
-
-        # MODEL might be a Pipeline with an estimator at the end, possibly even a feature selector
-        if isinstance(estimator, Pipeline):
-            if len(estimator.steps) > 1:
-                transformer = Pipeline(estimator.steps[:-1])
-                transformed_data = pd.DataFrame(transformer.transform(data), index=[0])
-                for step in transformer.steps:
-                    if hasattr(step[1], "get_support"):  # feature selector
-                        feature_names = data.columns[step[1].get_support()].tolist()
-                        break
-            estimator = estimator.steps[-1][1]
-        ret["explanation"] = eli5.format_as_dict(
-            eli5.explain_prediction(
-                estimator, transformed_data, feature_names=feature_names, top=None
-            )
-        )
+        ret["explanation"] = explain(MODEL, data, COLUMNS)
     return ret
 
 
