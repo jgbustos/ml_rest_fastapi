@@ -48,14 +48,14 @@ jobs:
           name: pylint checks
           command: |
             . venv/bin/activate
-            pip install pylint==2.16.2
+            pip install pylint==2.16.3
             python -m pylint ml_rest_fastapi
 
       - run:
           name: mypy type hint checks
           command: |
             . venv/bin/activate
-            pip install mypy==1.0.0
+            pip install mypy==1.0.1
             python -m mypy --pretty --config-file=mypy.ini ml_rest_fastapi
 
       - run:
