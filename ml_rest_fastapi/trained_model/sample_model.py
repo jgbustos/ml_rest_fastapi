@@ -1,5 +1,6 @@
 # coding: utf-8
 """Module that does all the ML trained model prediction heavy lifting."""
+from time import sleep
 from logging import Logger
 from datetime import datetime, date, timezone
 from os.path import normpath, join, dirname
@@ -9,7 +10,7 @@ import pandas as pd
 from ml_rest_fastapi.shared import get_logger
 from ml_rest_fastapi.settings import get_value
 
-# import joblib
+# import joblib #NOSONAR
 
 log: Logger = get_logger()
 
@@ -28,8 +29,6 @@ def init() -> None:
     """
     Loads the ML trained model (plus ancillary files) from file.
     """
-    from time import sleep  # pylint: disable=import-outside-toplevel
-
     log.info("Load model from file: %s", full_path("model.pkl"))
     sleep(5)  # Fake delay to emulate a large model that takes a long time to load
 
@@ -39,6 +38,14 @@ def init() -> None:
     #  MODEL = joblib.load(full_path('model.pkl'))
     #  feature_list = joblib.load(full_path('feature_list.pkl'))
     #  feature_selector = joblib.load(full_path('feature_selector.pkl'))
+
+
+def teardown() -> None:
+    """
+    Tears down the ML trained model
+    """
+    log.info("Tear down the model")
+    sleep(5)  # Fake delay to emulate a large model that takes a long time to unload
 
 
 def run(input_data: Iterable) -> Dict:

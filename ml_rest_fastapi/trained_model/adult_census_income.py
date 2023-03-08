@@ -42,6 +42,15 @@ def init() -> None:
     COLUMNS = joblib.load(full_path(COLUMNS_PICKLE_FILE))
 
 
+def teardown() -> None:
+    """
+    Tears down the ML trained model
+    """
+    log.info("Tear down the model")
+    global MODEL  # pylint: disable=global-statement
+    MODEL = None
+
+
 def explain(model, data, columns):
     """
     Explains the prediction with some help from eli5.

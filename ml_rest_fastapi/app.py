@@ -3,6 +3,8 @@
 import os
 import platform
 from subprocess import run
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
@@ -28,6 +30,19 @@ tags_metadata = [
 ]
 
 
+@asynccontextmanager
+async def lifespan(_fastapi: FastAPI) -> AsyncGenerator:
+    """
+    Lifespan context manager, used to initialise and teardown the trained ML model wrapper
+    """
+    if get_value("MULTITHREADED_INIT"):
+        trained_model_wrapper.multithreaded_init()
+    else:
+        trained_model_wrapper.init()
+    yield
+    trained_model_wrapper.teardown()
+
+
 app = FastAPI(
     title="Machine Learning REST FastAPI",
     description="A RESTful API to return predictions from a trained ML model, \
@@ -35,6 +50,7 @@ app = FastAPI(
     version="0.1.0",
     openapi_tags=tags_metadata,
     debug=get_value("DEBUG"),
+    lifespan=lifespan,
 )
 
 
@@ -54,17 +70,6 @@ def not_ready_exception_handler(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content=Message("Not Ready").to_json(),
     )
-
-
-@app.on_event("startup")
-def startup_event() -> None:
-    """
-    FastAPI startup event, used to initialise the trained ML model wrapper.
-    """
-    if get_value("MULTITHREADED_INIT"):
-        trained_model_wrapper.multithreaded_init()
-    else:
-        trained_model_wrapper.init()
 
 
 if __name__ == "__main__":

@@ -16,8 +16,9 @@ class TrainedModelWrapper:
     """
 
     def __init__(self) -> None:
-        """Initialise everything to None, particularly init, run, sample and ready methods."""
+        """Initialise everything to None, particularly init, teardown, run, sample methods."""
         self._init: WrapperCallableType = None
+        self._teardown: WrapperCallableType = None
         self._run: WrapperCallableType = None
         self._sample: WrapperCallableType = None
         self.initialised: bool = False
@@ -25,7 +26,7 @@ class TrainedModelWrapper:
         self.module: Optional[ModuleType] = None
 
     def load(self, module_name: str) -> None:
-        """Loads a Python module, binding the init, run and sample callable methods."""
+        """Loads a Python module, binding the init, teardown, run and sample callable methods."""
 
         def find_callable(callable_name: str) -> WrapperCallableType:
             """Returns a named attibute if it exists and it's callable"""
@@ -40,6 +41,7 @@ class TrainedModelWrapper:
             "ml_rest_fastapi.trained_model." + self.module_name
         )
         self._init = find_callable("init")
+        self._teardown = find_callable("teardown")
         self._run = find_callable("run")
         self._sample = find_callable("sample")
 
@@ -83,6 +85,12 @@ class TrainedModelWrapper:
         if self._init and not self.initialised:
             self._init()
             self.initialised = True
+
+    def teardown(self) -> None:
+        """Calls the wrapped teardown() method if it's assigned."""
+        if self._teardown and self.initialised:
+            self._teardown()
+        self.initialised = False
 
     def run(self, data: Iterable) -> Dict:
         """Calls the wrapped run() method if it's assigned."""
