@@ -75,16 +75,14 @@ class TrainedModelWrapper:
         """Returns whether the model was initialised and a wrapped run() method can be called"""
         return bool(self._run) and self.initialised
 
-    def multithreaded_init(self) -> None:
-        """Calls self.init() to load the model in a separate thread."""
-        if self._init:
-            Thread(target=self.init).start()
-
-    def init(self) -> None:
+    def setup(self, multithreaded: bool) -> None:
         """Calls the wrapped init() method if it's assigned."""
-        if self._init and not self.initialised:
-            self._init()
-            self.initialised = True
+        if self._init:
+            if multithreaded:
+                Thread(target=self.setup, args=(False,)).start()
+            elif not self.initialised:
+                self._init()
+                self.initialised = True
 
     def teardown(self) -> None:
         """Calls the wrapped teardown() method if it's assigned."""

@@ -36,10 +36,7 @@ async def lifespan(_fastapi: Starlette) -> AsyncGenerator:
     """
     Lifespan context manager, used to initialise and teardown the trained ML model wrapper
     """
-    if get_value("MULTITHREADED_INIT"):
-        trained_model_wrapper.multithreaded_init()
-    else:
-        trained_model_wrapper.init()
+    trained_model_wrapper.setup(get_value("MULTITHREADED_INIT"))
     yield
     trained_model_wrapper.teardown()
 
