@@ -6,7 +6,6 @@ from subprocess import run
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 import uvicorn
-from starlette.applications import Starlette
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
@@ -32,7 +31,7 @@ tags_metadata = [
 
 
 @asynccontextmanager
-async def lifespan(_fastapi: Starlette) -> AsyncGenerator:
+async def lifespan(_fastapi: FastAPI) -> AsyncGenerator:
     """
     Lifespan context manager, used to initialise and teardown the trained ML model wrapper
     """
