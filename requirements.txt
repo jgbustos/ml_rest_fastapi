@@ -7,3 +7,4 @@ pandas==2.0.1
 scikit-learn==1.2.2
 joblib==1.2.0
 eli5==0.13.0
+starlette>=0.27.0 # not directly required, pinned by Snyk to avoid a vulnerability
