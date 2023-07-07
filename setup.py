@@ -27,9 +27,10 @@ setup(
     keywords="python3 fastapi machine-learning rest-api",
     packages=find_packages(),
     install_requires=[
-        "fastapi>=0.87.0",
+        "fastapi>=0.100.0",
         "uvicorn>=0.19.0",
         "numpy>=1.22.0",
         "pandas>=1.4.0",
+        "pydantic>=2.0",
     ],
 )

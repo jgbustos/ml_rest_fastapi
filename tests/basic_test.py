@@ -7,6 +7,7 @@ import pytest
 from openapi_spec_validator import (
     openapi_v2_spec_validator,
     openapi_v30_spec_validator,
+    openapi_v31_spec_validator,
 )
 from openapi_spec_validator.validation.exceptions import OpenAPIValidationError
 
@@ -41,9 +42,9 @@ REQUEST_TIMEOUT = 0.1  # 100 milliseconds, life is too short
 MOCK_PREDICTION = "mock_prediction"
 NOT_A_DATETIME_MSG = "is not a 'date-time'"
 NOT_A_DATE_MSG = "is not a 'date'"
-VALUE_ERROR_MISSING = "value_error.missing"
-VALUE_ERROR_DATE = "value_error.date"
-VALUE_ERROR_DATETIME = "value_error.datetime"
+VALUE_ERROR_MISSING = "missing"
+VALUE_ERROR_DATE = "date_from_datetime_parsing"
+VALUE_ERROR_DATETIME = "datetime_parsing"
 
 
 def _get_request(url):
@@ -81,16 +82,25 @@ def _post_request_good_json_with_overrides(override_key=None, override_value=Non
     return response
 
 
-def test_get_swagger_json_is_valid_openapi_v3():
-    """Verify that /api/swagger.json file complies with OpenAPI v2."""
+def test_get_swagger_json_is_valid_openapi_v3_1():
+    """Verify that /api/swagger.json file complies with OpenAPI v3.1"""
     response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
     spec_dict = loads(response.text)
-    openapi_v30_spec_validator.validate(spec_dict)
+    openapi_v31_spec_validator.validate(spec_dict)
+    assert response.status_code == HTTPStatus.OK
+
+
+def test_get_swagger_json_is_not_valid_openapi_v3_0():
+    """Verify that /api/swagger.json file does NOT comply with OpenAPI v3.0."""
+    response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
+    spec_dict = loads(response.text)
+    with pytest.raises(OpenAPIValidationError):
+        openapi_v30_spec_validator.validate(spec_dict)
     assert response.status_code == HTTPStatus.OK
 
 
 def test_get_swagger_json_is_not_valid_openapi_v2():
-    """Verify that /api/swagger.json file does NOT comply with OpenAPI v3."""
+    """Verify that /api/swagger.json file does NOT comply with OpenAPI v2."""
     response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
     spec_dict = loads(response.text)
     with pytest.raises(OpenAPIValidationError):
@@ -169,28 +179,33 @@ def test_post_model_predict_datetime_param_missing_z_status_code_equals_200():
     assert MOCK_PREDICTION in response.text
 
 
-def test_post_model_predict_string_param_float_status_code_equals_200():
-    """Verify that calling /model/predict with float as string_param works fine
-    (yes, that's now pydantic rolls)."""
-    response = _post_request_good_json_with_overrides(STRING_PARAM, 10.1)
-    assert response.status_code == HTTPStatus.OK
-    assert MOCK_PREDICTION in response.text
-
-
-def test_post_model_predict_int_param_float_status_code_equals_200():
-    """Verify that calling /model/predict with float as int_param works fine
-    (yes, that's now pydantic rolls)."""
-    response = _post_request_good_json_with_overrides(INT_PARAM, 10.1)
+def test_post_model_predict_float_param_int_value_status_code_equals_200():
+    """Verify that calling /model/predict with integer value as float_param works fine."""
+    response = _post_request_good_json_with_overrides(FLOAT_PARAM, 10)
     assert response.status_code == HTTPStatus.OK
     assert MOCK_PREDICTION in response.text
 
 
 def test_post_model_predict_bool_param_string_true_status_code_equals_200():
-    """Verify that calling /model/predict with string "2"True" as bool_param works fine
+    """Verify that calling /model/predict with string "True" as bool_param works fine
     (yes, that's now pydantic rolls)."""
     response = _post_request_good_json_with_overrides(BOOL_PARAM, "True")
     assert response.status_code == HTTPStatus.OK
     assert MOCK_PREDICTION in response.text
+
+
+def test_post_model_predict_string_param_float_status_code_equals_422():
+    """Verify that calling /model/predict with float as string_param fails with 422."""
+    response = _post_request_good_json_with_overrides(STRING_PARAM, 10.1)
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "string_type" in response.text
+
+
+def test_post_model_predict_int_param_float_status_code_equals_422():
+    """Verify that calling /model/predict with float as int_param fails with 422."""
+    response = _post_request_good_json_with_overrides(INT_PARAM, 10.1)
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "int_from_float" in response.text
 
 
 def test_post_model_predict_int_param_missing_status_code_equals_422():
@@ -252,7 +267,7 @@ def test_post_model_predict_int_param_string_status_code_equals_422():
     wrong type."""
     response = _post_request_good_json_with_overrides(INT_PARAM, "a")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert "type_error.integer" in response.text
+    assert "int_parsing" in response.text
     assert INT_PARAM in response.text
 
 
@@ -261,7 +276,7 @@ def test_post_model_predict_float_param_string_status_code_equals_422():
     wrong type."""
     response = _post_request_good_json_with_overrides(FLOAT_PARAM, "a")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert "type_error.float" in response.text
+    assert "float_parsing" in response.text
     assert FLOAT_PARAM in response.text
 
 
@@ -270,7 +285,7 @@ def test_post_model_predict_bool_param_string_status_code_equals_422():
     wrong type."""
     response = _post_request_good_json_with_overrides(BOOL_PARAM, "foo")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert "type_error.bool" in response.text
+    assert "bool_parsing" in response.text
     assert BOOL_PARAM in response.text
 
 
@@ -363,7 +378,7 @@ def test_post_model_predict_datetime_param_bad_minute_status_code_equals_422():
 
 
 def test_post_model_predict_datetime_param_bad_second_status_code_equals_422():
-    """Verify that calling /model/predict with bad datetime_param (impossible second number)
+    """Verify that calling /model/predict with bad datetime_param (impossible seconds number)
     fails with 422 and flags wrong type."""
     response = _post_request_good_json_with_overrides(
         DATETIME_PARAM, "2021-11-30T14:37:64.15Z"
