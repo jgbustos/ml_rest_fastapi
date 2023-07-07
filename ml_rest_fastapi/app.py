@@ -2,6 +2,7 @@
 
 import os
 import platform
+import multiprocessing
 from subprocess import run
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
@@ -80,4 +81,11 @@ if __name__ == "__main__":
             check=True,
         )
     else:
-        uvicorn.run("app:app", host="0.0.0.0", port=8888, reload=get_value("DEBUG"))
+        uvicorn.run(
+            "app:app",
+            host="0.0.0.0",
+            port=8888,
+            reload=get_value("DEBUG"),
+            workers=multiprocessing.cpu_count() * 2
+            - 1,  # Irrelevant if reload=True in DEBUG mode
+        )
