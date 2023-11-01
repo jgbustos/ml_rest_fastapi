@@ -67,7 +67,9 @@ def run(input_data: Iterable) -> Dict:
     # then make (or mock) a prediction
     #  prediction = MODEL.predict(data)
 
-    log.info("transformed_data: %s", np.array_str(data.to_numpy()[0], max_line_width=10000))
+    log.info(
+        "transformed_data: %s", np.array_str(data.to_numpy()[0], max_line_width=10000)
+    )
     prediction = "mock_prediction"
     if isinstance(prediction, np.ndarray):
         prediction = prediction.tolist()[0]
