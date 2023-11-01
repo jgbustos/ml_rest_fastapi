@@ -83,7 +83,7 @@ def run(input_data: Iterable) -> Dict:
     data = pd.DataFrame(input_data, index=[0])
     data = pd.get_dummies(data)
     data = data.reindex(columns=COLUMNS, fill_value=0)
-    log.info("transformed_data: %s", np.array_str(data.values[0], max_line_width=10000))
+    log.info("transformed_data: %s", np.array_str(data.to_numpy()[0], max_line_width=10000))
 
     ret = {}
 

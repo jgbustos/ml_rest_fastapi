@@ -4,7 +4,8 @@ LABEL maintainer="j.garciadebustos@godeltech.com"
 
 # OpenMP library needed by LightGBM, XGBoost, etc
 RUN apt-get update \
- && apt-get install -y --no-install-recommends libgomp1
+ && apt-get install -y --no-install-recommends libgomp1 \
+ && apt clean
 
 COPY requirements.txt /app/
 
