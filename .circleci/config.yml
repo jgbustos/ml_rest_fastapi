@@ -48,19 +48,19 @@ jobs:
           name: pylint checks
           command: |
             . venv/bin/activate
-            pip install pylint==3.0.2
+            pip install pylint
             python -m pylint ml_rest_fastapi
 
       - run:
           name: mypy type hint checks
           command: |
             . venv/bin/activate
-            pip install mypy==1.6.1
+            pip install mypy
             python -m mypy --pretty --config-file=mypy.ini ml_rest_fastapi
 
       - run:
           name: black formatter checks
           command: |
             . venv/bin/activate
-            pip install black==23.10.1
+            pip install black
             python -m black --check ml_rest_fastapi
