@@ -49,12 +49,12 @@ responses_dict: Dict[Union[int, str], Dict[str, Any]] = {
     status.HTTP_200_OK: make_openapi_response(
         model_type=Dict, example={"prediction": "example"}
     ),
-    status.HTTP_500_INTERNAL_SERVER_ERROR: make_openapi_response(
-        mime_type="text/plain", example=EXAMPLE_TRACEBACK
-    )
-    if get_value("DEBUG")
-    else make_openapi_response(
-        model_type=Message, example=Message("Internal Server Error").to_json()
+    status.HTTP_500_INTERNAL_SERVER_ERROR: (
+        make_openapi_response(mime_type="text/plain", example=EXAMPLE_TRACEBACK)
+        if get_value("DEBUG")
+        else make_openapi_response(
+            model_type=Message, example=Message("Internal Server Error").to_json()
+        )
     ),
     status.HTTP_503_SERVICE_UNAVAILABLE: make_openapi_response(
         model_type=Message, example=Message("Not Ready").to_json()
