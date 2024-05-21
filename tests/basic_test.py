@@ -5,9 +5,10 @@ from json import loads
 import requests
 import pytest
 from openapi_spec_validator import (
-    openapi_v2_spec_validator,
-    openapi_v30_spec_validator,
-    openapi_v31_spec_validator,
+    validate,
+    OpenAPIV2SpecValidator,
+    OpenAPIV30SpecValidator,
+    OpenAPIV31SpecValidator
 )
 from openapi_spec_validator.validation.exceptions import OpenAPIValidationError
 
@@ -44,7 +45,7 @@ NOT_A_DATETIME_MSG = "is not a 'date-time'"
 NOT_A_DATE_MSG = "is not a 'date'"
 VALUE_ERROR_MISSING = "missing"
 VALUE_ERROR_DATE = "date_from_datetime_parsing"
-VALUE_ERROR_DATETIME = "datetime_parsing"
+VALUE_ERROR_DATETIME = "datetime_from_date_parsing"
 
 
 def _get_request(url):
@@ -86,7 +87,7 @@ def test_get_swagger_json_is_valid_openapi_v3_1():
     """Verify that /api/swagger.json file complies with OpenAPI v3.1"""
     response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
     spec_dict = loads(response.text)
-    openapi_v31_spec_validator.validate(spec_dict)
+    validate(spec_dict, cls=OpenAPIV31SpecValidator)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -95,7 +96,7 @@ def test_get_swagger_json_is_not_valid_openapi_v3_0():
     response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
     spec_dict = loads(response.text)
     with pytest.raises(OpenAPIValidationError):
-        openapi_v30_spec_validator.validate(spec_dict)
+        validate(spec_dict, cls=OpenAPIV30SpecValidator)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -104,7 +105,7 @@ def test_get_swagger_json_is_not_valid_openapi_v2():
     response = _get_request(ROOT_URL + SWAGGER_JSON_PATH)
     spec_dict = loads(response.text)
     with pytest.raises(OpenAPIValidationError):
-        openapi_v2_spec_validator.validate(spec_dict)
+        validate(spec_dict, cls=OpenAPIV2SpecValidator)
     assert response.status_code == HTTPStatus.OK
 
 
