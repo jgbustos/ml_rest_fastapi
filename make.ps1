@@ -1,6 +1,8 @@
-Write-Host "---------- Reformating with black... ----------" -ForegroundColor Blue
+$StyleOn="$($PSStyle.Bold)$($PSStyle.Foreground.Blue)"
+$StyleOff="$($PSStyle.Reset)"
+Write-Host $StyleOn"---------- Reformating with black... ----------"$StyleOff
 black .\ml_rest_fastapi .\tests
-Write-Host "---------- Analysing with pylint... -----------" -ForegroundColor Blue
+Write-Host $StyleOn"---------- Analysing with pylint... -----------"$StyleOff
 pylint --recursive=y .\ml_rest_fastapi .\tests
-Write-Host "---------- Validating with mypy... ------------" -ForegroundColor Blue
+Write-Host $StyleOn"---------- Validating with mypy... ------------"$StyleOff
 mypy --pretty --config-file=mypy.ini .\ml_rest_fastapi
