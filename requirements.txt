@@ -8,3 +8,4 @@ pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
 eli5==0.13.0
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
