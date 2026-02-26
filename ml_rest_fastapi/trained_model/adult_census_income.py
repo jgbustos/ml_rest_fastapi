@@ -27,8 +27,8 @@ MODEL_PICKLE_FILE: str = "LightGBM_80.pkl"
 # Pickled list of columns after pandas.get_dummies()
 COLUMNS_PICKLE_FILE: str = "columns.pkl"
 
-_model: Any = None
-_columns: Any = None
+_model: Any = None  # pylint: disable=invalid-name
+_columns: Any = None  # pylint: disable=invalid-name
 
 
 def init() -> None:
@@ -38,8 +38,12 @@ def init() -> None:
     log.info("Load model from file: %s", full_path(MODEL_PICKLE_FILE))
     global _model  # pylint: disable=global-statement
     global _columns  # pylint: disable=global-statement
-    _model = joblib.load(full_path(MODEL_PICKLE_FILE))  # pyright: ignore[reportUnknownMemberType]
-    _columns = joblib.load(full_path(COLUMNS_PICKLE_FILE))  # pyright: ignore[reportUnknownMemberType]
+    _model = joblib.load(
+        full_path(MODEL_PICKLE_FILE)
+    )  # pyright: ignore[reportUnknownMemberType]
+    _columns = joblib.load(
+        full_path(COLUMNS_PICKLE_FILE)
+    )  # pyright: ignore[reportUnknownMemberType]
 
 
 def teardown() -> None:
@@ -60,7 +64,8 @@ def explain(model: Any, data: Any, columns: Any) -> Any:
     feature_names = columns
     # model might be a Pipeline with an estimator at the end, possibly even a feature selector
     if isinstance(estimator, Pipeline):
-        # getattr returns Any (not Unknown), breaking the Unknown cascade from sklearn's partial stubs
+        # getattr returns Any (not Unknown), breaking the Unknown cascade
+        # from sklearn's partial stubs
         steps: list[Any] = getattr(estimator, "steps")
         if len(steps) > 1:
             transformer = Pipeline(steps[:-1])
@@ -88,7 +93,9 @@ def run(input_data: Iterable[Any]) -> Dict[str, Any]:
     log.info("input_data: %s", input_data)
     data = pd.DataFrame(input_data, index=[0])
     data = pd.get_dummies(data)  # pyright: ignore[reportUnknownMemberType]
-    data = data.reindex(columns=_columns, fill_value=0)  # pyright: ignore[reportUnknownMemberType]
+    data = data.reindex(
+        columns=_columns, fill_value=0
+    )  # pyright: ignore[reportUnknownMemberType]
     log.info(
         "transformed_data: %s", np.array_str(data.to_numpy()[0], max_line_width=10000)
     )
