@@ -12,10 +12,14 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip \
  && pip install --upgrade --no-cache-dir -r /app/requirements.txt
 
-COPY . /app
+RUN useradd --create-home appuser
+
+COPY --chown=appuser:appuser . /app
 WORKDIR /app
 
 EXPOSE 8888
 ENV PYTHONPATH "${PYTHONPATH}:/app/ml_rest_fastapi"
+
+USER appuser
 
 CMD ["/usr/local/bin/gunicorn", "--config", "gunicorn.conf.py"]
