@@ -14,7 +14,7 @@ RUN pip install --upgrade pip \
 
 RUN useradd --create-home appuser
 
-COPY --chown=appuser:appuser . /app
+COPY . /app
 WORKDIR /app
 
 EXPOSE 8888
