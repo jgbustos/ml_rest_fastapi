@@ -1,11 +1,11 @@
-FROM python:3.10-slim
+FROM python:3.13-slim
 
 LABEL maintainer="j.garciadebustos@godeltech.com"
 
 # OpenMP library needed by LightGBM, XGBoost, etc
 RUN apt-get update \
  && apt-get install -y --no-install-recommends libgomp1 \
- && apt clean
+ && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
 
