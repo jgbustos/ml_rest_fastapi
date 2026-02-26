@@ -1,5 +1,6 @@
 # coding: utf-8
 """Module that does all the ML trained model prediction heavy lifting."""
+
 from time import sleep
 from logging import Logger
 from datetime import datetime, date, timezone

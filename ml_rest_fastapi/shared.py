@@ -10,7 +10,7 @@ from ml_rest_fastapi.settings import get_value
 class Serialisable:
     """Parent serialisable dataclass"""
 
-    def to_json(self) -> Dict:
+    def to_json(self) -> Dict[str, Any]:
         """Return as dict so it can be JSON serialisable"""
         return asdict(self)
 

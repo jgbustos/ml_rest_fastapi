@@ -8,10 +8,9 @@ from openapi_spec_validator import (
     validate,
     OpenAPIV2SpecValidator,
     OpenAPIV30SpecValidator,
-    OpenAPIV31SpecValidator
+    OpenAPIV31SpecValidator,
 )
 from openapi_spec_validator.validation.exceptions import OpenAPIValidationError
-
 
 ROOT_URL = "http://localhost:8888/"
 SWAGGER_JSON_PATH = "openapi.json"

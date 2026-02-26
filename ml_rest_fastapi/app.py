@@ -5,7 +5,7 @@ import platform
 import multiprocessing
 from subprocess import run
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from typing import AsyncIterator
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
@@ -32,7 +32,7 @@ tags_metadata = [
 
 
 @asynccontextmanager
-async def lifespan(_fastapi: FastAPI) -> AsyncGenerator:
+async def lifespan(_fastapi: FastAPI) -> AsyncIterator[None]:
     """
     Lifespan context manager, used to initialise and teardown the trained ML model wrapper
     """
