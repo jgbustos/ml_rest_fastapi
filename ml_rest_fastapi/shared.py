@@ -31,14 +31,14 @@ class MLRestFastAPINotReadyException(MLRestFastAPIException):
 
 
 def make_openapi_response(
-    model_type: Optional[Type] = None,
+    model_type: Optional[Type[Any]] = None,
     mime_type: str = "application/json",
-    example: Union[str, Dict] = "",
+    example: Union[str, Dict[str, Any]] = "",
 ) -> Dict[str, Any]:
     """
     Returns a declaration of an OpenAPI extended response.
     """
-    ret: Dict = {}
+    ret: Dict[str, Any] = {}
     if model_type:
         ret["model"] = model_type
     ret["content"] = {

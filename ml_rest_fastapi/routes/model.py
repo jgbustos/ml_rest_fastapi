@@ -13,7 +13,7 @@ from ml_rest_fastapi.shared import (
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
 
 
-def dict_value_types(arg: Dict) -> Dict:
+def dict_value_types(arg: Dict[str, Any]) -> Dict[str, Any]:
     """
     Takes a Dict like {"foo": "bar", "xx": 12} and returns {"foo": (str, ...), "xx": (int, ...)}
     because pydantic.create_model needs these (type, ellipsis) tuples to make fields required
@@ -68,7 +68,7 @@ responses_dict: Dict[Union[int, str], Dict[str, Any]] = {
     operation_id="predict_post",
     responses=responses_dict,
 )
-def model_predict(input_vector: InputVector) -> Dict:
+def model_predict(input_vector: InputVector) -> Dict[str, Any]:
     """
     Returns a prediction using the trained ML model.
     """

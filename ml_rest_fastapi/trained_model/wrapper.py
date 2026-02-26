@@ -4,11 +4,11 @@ import os
 import os.path
 import importlib
 from threading import Thread
-from typing import Optional, Iterable, Callable, Dict
+from typing import Any, Optional, Iterable, Callable, Dict, cast
 from types import ModuleType
 from ml_rest_fastapi.settings import get_value
 
-WrapperCallableType = Optional[Callable]
+WrapperCallableType = Optional[Callable[..., Any]]
 
 
 class TrainedModelWrapper:
@@ -34,7 +34,7 @@ class TrainedModelWrapper:
             if hasattr(self.module, callable_name):
                 funct = getattr(self.module, callable_name)
                 if callable(funct):
-                    return funct
+                    return cast(WrapperCallableType, funct)
             return None
 
         self.module_name, _ = os.path.splitext(module_name)
@@ -91,16 +91,16 @@ class TrainedModelWrapper:
             self._teardown()
         self.initialised = False
 
-    def run(self, data: Iterable) -> Dict:
+    def run(self, data: Iterable[Any]) -> Dict[str, Any]:
         """Calls the wrapped run() method if it's assigned."""
         if self._run:
-            return self._run(data)
+            return cast(Dict[str, Any], self._run(data))
         return {}
 
-    def sample(self) -> Dict:
+    def sample(self) -> Dict[str, Any]:
         """Calls the wrapped sample() method if it's assigned."""
         if self._sample:
-            return self._sample()
+            return cast(Dict[str, Any], self._sample())
         return {}
 
 

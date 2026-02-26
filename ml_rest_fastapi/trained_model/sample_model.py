@@ -49,7 +49,7 @@ def teardown() -> None:
     sleep(5)  # Fake delay to emulate a large model that takes a long time to unload
 
 
-def run(input_data: Iterable) -> Dict:
+def run(input_data: Iterable[Any]) -> Dict[str, Any]:
     """
     Makes a prediction using the trained ML model.
     """
@@ -76,7 +76,7 @@ def run(input_data: Iterable) -> Dict:
         prediction = prediction.tolist()[0]
     log.info("prediction: %s", prediction)
 
-    ret = {}
+    ret: Dict[str, Any] = {}
     ret["prediction"] = prediction
     if get_value("EXPLAIN_PREDICTIONS"):
         ret["explanation"] = "mock_explanation"

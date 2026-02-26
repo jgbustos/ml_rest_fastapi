@@ -27,8 +27,8 @@ MODEL_PICKLE_FILE: str = "LightGBM_80.pkl"
 # Pickled list of columns after pandas.get_dummies()
 COLUMNS_PICKLE_FILE: str = "columns.pkl"
 
-MODEL: Any = None
-COLUMNS: Any = None
+_model: Any = None
+_columns: Any = None
 
 
 def init() -> None:
@@ -36,10 +36,10 @@ def init() -> None:
     Loads the ML trained model (plus ancillary files) from file.
     """
     log.info("Load model from file: %s", full_path(MODEL_PICKLE_FILE))
-    global MODEL  # pylint: disable=global-statement
-    global COLUMNS  # pylint: disable=global-statement
-    MODEL = joblib.load(full_path(MODEL_PICKLE_FILE))
-    COLUMNS = joblib.load(full_path(COLUMNS_PICKLE_FILE))
+    global _model  # pylint: disable=global-statement
+    global _columns  # pylint: disable=global-statement
+    _model = joblib.load(full_path(MODEL_PICKLE_FILE))  # pyright: ignore[reportUnknownMemberType]
+    _columns = joblib.load(full_path(COLUMNS_PICKLE_FILE))  # pyright: ignore[reportUnknownMemberType]
 
 
 def teardown() -> None:
@@ -47,11 +47,11 @@ def teardown() -> None:
     Tears down the ML trained model
     """
     log.info("Tear down the model")
-    global MODEL  # pylint: disable=global-statement
-    MODEL = None
+    global _model  # pylint: disable=global-statement
+    _model = None
 
 
-def explain(model, data, columns):
+def explain(model: Any, data: Any, columns: Any) -> Any:
     """
     Explains the prediction with some help from eli5.
     """
@@ -60,43 +60,49 @@ def explain(model, data, columns):
     feature_names = columns
     # model might be a Pipeline with an estimator at the end, possibly even a feature selector
     if isinstance(estimator, Pipeline):
-        if len(estimator.steps) > 1:
-            transformer = Pipeline(estimator.steps[:-1])
-            transformed_data = pd.DataFrame(transformer.transform(data), index=[0])
-            for step in transformer.steps:
+        # getattr returns Any (not Unknown), breaking the Unknown cascade from sklearn's partial stubs
+        steps: list[Any] = getattr(estimator, "steps")
+        if len(steps) > 1:
+            transformer = Pipeline(steps[:-1])
+            transformed_data = pd.DataFrame(
+                getattr(transformer, "transform")(data), index=[0]
+            )
+            for step in steps[:-1]:
                 if hasattr(step[1], "get_support"):  # feature selector
                     feature_names = data.columns[step[1].get_support()].tolist()
                     break
-        estimator = estimator.steps[-1][1]
-    return eli5.format_as_dict(
-        eli5.explain_prediction(
+        estimator = steps[-1][1]
+    # eli5 is fully untyped; use an Any-annotated alias so member access returns Any, not Unknown
+    eli5_any: Any = eli5
+    return eli5_any.format_as_dict(
+        eli5_any.explain_prediction(
             estimator, transformed_data, feature_names=feature_names, top=None
         )
     )
 
 
-def run(input_data: Iterable) -> Dict:
+def run(input_data: Iterable[Any]) -> Dict[str, Any]:
     """
     Makes a prediction using the trained ML model.
     """
     log.info("input_data: %s", input_data)
     data = pd.DataFrame(input_data, index=[0])
-    data = pd.get_dummies(data)
-    data = data.reindex(columns=COLUMNS, fill_value=0)
+    data = pd.get_dummies(data)  # pyright: ignore[reportUnknownMemberType]
+    data = data.reindex(columns=_columns, fill_value=0)  # pyright: ignore[reportUnknownMemberType]
     log.info(
         "transformed_data: %s", np.array_str(data.to_numpy()[0], max_line_width=10000)
     )
 
-    ret = {}
+    ret: Dict[str, Any] = {}
 
-    prediction = MODEL.predict(data)
+    prediction = _model.predict(data)
     if isinstance(prediction, np.ndarray):
         prediction = prediction.tolist()[0]
     log.info("prediction: %s", prediction)
     ret["prediction"] = prediction
 
     if get_value("EXPLAIN_PREDICTIONS"):
-        ret["explanation"] = explain(MODEL, data, COLUMNS)
+        ret["explanation"] = explain(_model, data, _columns)
     return ret
 
 
