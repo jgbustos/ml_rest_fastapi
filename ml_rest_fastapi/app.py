@@ -1,12 +1,15 @@
 """This module is the RESTful service entry point."""
 
 import os
+import inspect
+import logging
 import platform
 import multiprocessing
 from subprocess import run
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 import uvicorn
+from loguru import logger
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
@@ -18,6 +21,46 @@ from ml_rest_fastapi.shared import (
 from ml_rest_fastapi.routes.health import health_route
 from ml_rest_fastapi.routes.model import model_route
 from ml_rest_fastapi.trained_model.wrapper import trained_model_wrapper
+
+
+class InterceptHandler(logging.Handler):
+    """Redirect all standard-library logging records into loguru."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            level: str | int = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+        frame, depth = inspect.currentframe(), 0
+        for _ in range(6):
+            if frame is not None:
+                frame = frame.f_back
+                depth += 1
+        while frame and frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back  # type: ignore[assignment]
+            depth += 1
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
+
+
+def setup_logging() -> None:
+    """Install loguru as the single log sink for all stdlib logging."""
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    for _name in (
+        "uvicorn",
+        "uvicorn.error",
+        "uvicorn.access",
+        "gunicorn",
+        "gunicorn.error",
+        "gunicorn.access",
+    ):
+        _log = logging.getLogger(_name)
+        _log.handlers = [InterceptHandler()]
+        _log.propagate = False
+
+
+setup_logging()
 
 tags_metadata = [
     {

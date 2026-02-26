@@ -2,18 +2,15 @@
 """Module that does all the ML trained model prediction heavy lifting."""
 
 from time import sleep
-from logging import Logger
 from datetime import datetime, date, timezone
 from os.path import normpath, join, dirname
 from typing import Any, Iterable, Dict
 import numpy as np
 import pandas as pd
-from ml_rest_fastapi.shared import get_logger
+from loguru import logger as log
 from ml_rest_fastapi.settings import get_value
 
 # import joblib #NOSONAR
-
-log: Logger = get_logger()
 
 
 def full_path(filename: str) -> str:

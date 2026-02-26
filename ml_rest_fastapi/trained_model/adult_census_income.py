@@ -1,7 +1,6 @@
 # coding: utf-8
 """Module that does all the ML trained model prediction heavy lifting."""
 
-from logging import Logger
 from os.path import normpath, join, dirname
 from typing import Any, Iterable, Dict
 import joblib
@@ -9,10 +8,8 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 import eli5
-from ml_rest_fastapi.shared import get_logger
+from loguru import logger as log
 from ml_rest_fastapi.settings import get_value
-
-log: Logger = get_logger()
 
 
 def full_path(filename: str) -> str:
@@ -38,12 +35,12 @@ def init() -> None:
     log.info("Load model from file: %s", full_path(MODEL_PICKLE_FILE))
     global _model  # pylint: disable=global-statement
     global _columns  # pylint: disable=global-statement
-    _model = joblib.load(
+    _model = joblib.load(  # pyright: ignore[reportUnknownMemberType]
         full_path(MODEL_PICKLE_FILE)
-    )  # pyright: ignore[reportUnknownMemberType]
-    _columns = joblib.load(
+    )
+    _columns = joblib.load(  # pyright: ignore[reportUnknownMemberType]
         full_path(COLUMNS_PICKLE_FILE)
-    )  # pyright: ignore[reportUnknownMemberType]
+    )
 
 
 def teardown() -> None:

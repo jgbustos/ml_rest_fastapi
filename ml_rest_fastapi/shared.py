@@ -1,9 +1,7 @@
 """This module declares shared stuff"""
 
 from typing import Any, Type, Optional, Dict, Union
-from logging import Logger, getLogger
 from dataclasses import dataclass, asdict
-from ml_rest_fastapi.settings import get_value
 
 
 @dataclass
@@ -47,14 +45,3 @@ def make_openapi_response(
         },
     }
     return ret
-
-
-def get_logger() -> Logger:
-    """
-    Return the uvicorn or gunicorn logger instance, based on how we're running
-    """
-    if "gunicorn" in str(get_value("SERVER_SOFTWARE")):
-        log = getLogger("gunicorn.error")
-    else:
-        log = getLogger("uvicorn.error")
-    return log
