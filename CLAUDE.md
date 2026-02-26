@@ -39,6 +39,11 @@ pylint --recursive=y ./ml_rest_fastapi ./tests
 mypy --pretty --config-file=mypy.ini ./ml_rest_fastapi
 ```
 
+### Dependencies
+- `requirements.txt` — runtime dependencies (install with `pip install -r requirements.txt`)
+- `requirements-dev.txt` — dev tooling: black, pylint, mypy
+- `tests/requirements.txt` — test dependencies: pytest, requests, openapi-spec-validator
+
 ## Architecture
 
 The core design pattern is a **plugin-style model wrapper**: `TrainedModelWrapper` (`trained_model/wrapper.py`) dynamically imports a Python module from `trained_model/` at startup and binds four callables from it: `init()`, `teardown()`, `run(data)`, and `sample()`. The active module is chosen by the `TRAINED_MODEL_MODULE_NAME` setting (env var overrides `settings.py`).
@@ -50,6 +55,8 @@ The core design pattern is a **plugin-style model wrapper**: `TrainedModelWrappe
 4. `health/ready` returns 503 until `init()` completes.
 
 **Adding a new model module:** Create `ml_rest_fastapi/trained_model/<name>.py` implementing `init()`, `teardown()`, `run(data: Iterable) -> Iterable`, and `sample() -> Dict` with mypy type hints. Set `TRAINED_MODEL_MODULE_NAME=<name>`. See `sample_model.py` for a template and `adult_census_income.py` for a real LightGBM example.
+
+**Logging:** All logging goes through [loguru](https://github.com/Delgan/loguru). `app.py` installs an `InterceptHandler` at startup that redirects the stdlib root logger and all uvicorn/gunicorn named loggers into loguru. Model modules import the logger directly: `from loguru import logger as log`.
 
 **Settings** (`settings.py`): All settings fall back from env var → `settings` dict. Key settings: `TRAINED_MODEL_MODULE_NAME`, `EXPLAIN_PREDICTIONS`, `DEBUG`, `MULTITHREADED_INIT`.
 
