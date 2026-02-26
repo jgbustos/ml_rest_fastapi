@@ -21,3 +21,4 @@ mypy.ini
 pyrightconfig.json
 .env
 *.cfg
+requirements-dev.txt
